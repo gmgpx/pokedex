@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- SEO -->
+    <meta name="description" content="Uma Pokédex interativa que utiliza a PokéAPI para exibir detalhes de Pokémon.">
+    <meta name="keywords" content="Pokédex, Pokémon, API, JavaScript, Desenvolvimento Web">
+    <meta name="author" content="Seu Nome">
+    
+    <!-- ícone -->
     <link rel="icon" href="./assets/favicon-16x16.png">
+
+    <!-- estilização -->
     <link rel="stylesheet" href="./style.css">
 
+    <!-- javascript -->
     <script defer src="./script.js"></script>
 
     <title>Pokédex</title>
@@ -14,29 +23,34 @@
 <body>
 
     <main>
-        <img src="#" alt="pokemon" class="pokemon">
+        <img src="#" alt="Imagem do Pokémon" class="pokemon" aria-hidden="true">
 
-        <h1 class="pokemon_data">
+        <h1 class="pokemon_data" aria-live="polite">
             <span class="pokemon_id"></span> - 
             <span class="pokemon_name"></span>
         </h1>
 
-        <form class="form">
+        <form class="form" aria-label="Buscar Pokémon">
             <input 
-            type="search" 
-            class="input_search" 
-            placeholder="Name or Number"
-            required
+                type="search" 
+                class="input_search" 
+                placeholder="Nome ou Número" 
+                aria-label="Digite o nome ou número do Pokémon" 
+                required
             />
         </form>
 
         <div class="buttons">
-            <button class="button btn-prev">Prev &lt</button>
-            <button class="button btn-next">Next &gt</button>
+            <button class="button btn-prev" aria-label="Pokémon anterior">Prev &lt;</button>
+            <button class="button btn-next" aria-label="Próximo Pokémon">Next &gt;</button>
         </div>
 
-        <img src="./assets/pokedex.png" alt="pokedex" class="pokedex">
+        <img src="./assets/pokedex.png" alt="Imagem de uma Pokédex" class="pokedex">
     </main>
+
+    <footer>
+        <p>Desenvolvido por <a href="https://github.com/gmgpx" target="_blank">Gustavo Monteiro</a></p>
+    </footer>
 
 </body>
 </html>
