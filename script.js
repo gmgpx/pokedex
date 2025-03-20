@@ -1,63 +1,81 @@
-const pokemonName = document.querySelector('.pokemon_name');
-const pokemonNumber = document.querySelector('.pokemon_id');
-const pokemonImg = document.querySelector('.pokemon');
+const API_BASE_URL = "https://pokeapi.co/api/v2/pokemon/";
 
+// Cliente REST para buscar Pokémon da pokéAPI
+const PokemonAPI = {
+    async getPokemon(pokemon) {
+        try {
+            const response = await fetch(`${API_BASE_URL}${pokemon}`);
+            if (!response.ok) throw new Error("Not found");
+            return await response.json();
+        } catch (error) {
+            return null;
+        }
+    },
+};
 
-const form = document.querySelector('.form');
-const input = document.querySelector('.input_search');
-const prev = document.querySelector('.btn-prev');
-const next = document.querySelector('.btn-next');
+// Selecionando elementos da DOM
+const pokemonName = document.querySelector(".pokemon_name");
+const pokemonNumber = document.querySelector(".pokemon_id");
+const pokemonImg = document.querySelector(".pokemon");
+const form = document.querySelector(".form");
+const input = document.querySelector(".input_search");
+const prev = document.querySelector(".btn-prev");
+const next = document.querySelector(".btn-next");
 
-let searchPokemon = 1;
+// Estado do Pokémon atual
+let currentPokemonId = 1;
 
+// Atualiza a interface com os dados do Pokémon
+const updatePokemon = async (pokemon) => {
+    pokemonName.textContent = "Loading...";
+    pokemonNumber.textContent = "";
 
-const fetchpokemon = async (pokemon) =>{
-    const APIResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`);
-
-    if(APIResponse.status == 200){
-    const data = await APIResponse.json();
-    return data;
+    const data = await PokemonAPI.getPokemon(pokemon);
+    
+    if (data) {
+        pokemonImg.style.display = "block";
+        pokemonName.textContent = data.name;
+        pokemonNumber.textContent = data.id;
+        pokemonImg.src = data.sprites.versions["generation-v"]["black-white"].animated.front_default;
+        input.value = "";
+        currentPokemonId = data.id; // Atualiza o estado
+        updateURL(currentPokemonId); // Atualiza a URL com o ID do Pokémon
+    } else {
+        pokemonImg.style.display = "none";
+        pokemonName.textContent = "Not found!";
+        pokemonNumber.textContent = "";
     }
-}
+};
 
-const renderPokemon = async (pokemon) => {
+// Atualiza a URL ao trocar de Pokémon
+const updateURL = (id) => {
+    window.history.pushState({}, "", `?pokemon=${id}`);
+};
 
-    pokemonName.innerHTML = 'Loading...';
-    pokemonNumber.innerHTML = '';
+// Verifica se há um Pokémon na URL e carrega ao iniciar
+const loadPokemonFromURL = () => {
+    const params = new URLSearchParams(window.location.search);
+    const pokemonId = params.get("pokemon") || 1;
+    updatePokemon(pokemonId);
+};
 
-    const data = await fetchpokemon(pokemon);
-
-    if(data){
-    pokemonImg.style.display = 'block';
-    pokemonName.innerHTML = data.name;
-    pokemonNumber.innerHTML = data.id;
-    pokemonImg.src = data['sprites']['versions']['generation-v']['black-white']['animated']['front_default'];
-
-    input.value = '';
-    searchPokemon = data.id;
-    }else{
-        pokemonImg.style.display = 'none';
-        pokemonName.innerHTML = 'Not found!';
-        pokemonNumber.innerHTML = '';
-    }
-
-}
-
-form.addEventListener('submit', (event) =>{
+// Evento para pesquisar pelo formulário
+form.addEventListener("submit", (event) => {
     event.preventDefault();
-    renderPokemon(input.value.toLowerCase());
+    updatePokemon(input.value.toLowerCase());
 });
 
-prev.addEventListener('click', () =>{
-    if(searchPokemon > 1){
-    searchPokemon -= 1;
-    renderPokemon(searchPokemon);
+// Evento para botão "Anterior"
+prev.addEventListener("click", () => {
+    if (currentPokemonId > 1) {
+        updatePokemon(--currentPokemonId);
     }
 });
 
-next.addEventListener('click', () =>{
-    searchPokemon += 1;
-    renderPokemon(searchPokemon);
+// Evento para botão "Próximo"
+next.addEventListener("click", () => {
+    updatePokemon(++currentPokemonId);
 });
 
-renderPokemon(searchPokemon);
+// Carrega o Pokémon da URL ao iniciar
+loadPokemonFromURL();
